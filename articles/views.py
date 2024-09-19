@@ -17,3 +17,13 @@ def dinner(request):
 
 def search(request):
     return render(request, 'articles/search.html')
+
+def throw(request):
+    return render(request, 'articles/throw.html')
+
+def catch(request):
+    # 사용자가 요청보낸 데이터를 추출해서 context 딕셔너리에 세팅
+    context = {
+        'message':request.GET.get('message')
+    }
+    return render(request, 'articles/catch.html', context)

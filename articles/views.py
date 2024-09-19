@@ -27,3 +27,8 @@ def catch(request):
         'message':request.GET.get('message')
     }
     return render(request, 'articles/catch.html', context)
+def greeting(request, name):
+    context = {
+        'name' : name,
+    }
+    return render(request, 'articles/greeting.html', context)

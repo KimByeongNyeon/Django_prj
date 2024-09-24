@@ -1,5 +1,6 @@
 import random
-from django.shortcuts import render
+import re
+from django.shortcuts import render, redirect
 from .models import Article
 # Create your views here.
 
@@ -12,34 +13,44 @@ def index(request):
     return render(request, 'articles/index.html', context)
 
 
-def dinner(request):
-    foods = ['국밥', '국수', '카레', '탕수육', ]
-    picked = random.choice(foods)
+def detail(request, pk):
+    article = Article.objects.get(pk=pk)
     context = {
-        'foods': foods,
-        'picked': picked,
+        'article': article
     }
-    return render(request, 'articles/dinner.html', context)
+    return render(request, 'articles/detail.html', context)
 
 
-def search(request):
-    return render(request, 'articles/search.html')
+def new(request):
+    return render(request, 'articles/new.html')
 
 
-def throw(request):
-    return render(request, 'articles/throw.html')
+def create(request):
+    title = request.POST.get('title')
+    content = request.POST.get('content')
+
+    article = Article(title=title, content=content)
+    article.save()
+    return redirect('articles:detail', article.pk)
 
 
-def catch(request):
-    # 사용자가 요청보낸 데이터를 추출해서 context 딕셔너리에 세팅
+def delete(request, pk):
+    article = Article.objects.get(pk=pk)
+    article.delete()
+    return redirect('articles:index')
+
+
+def edit(request, pk):
+    article = Article.objects.get(pk=pk)
     context = {
-        'message': request.GET.get('message')
+        'article': article
     }
-    return render(request, 'articles/catch.html', context)
+    return render(request, 'articles/edit.html', context)
 
 
-def greeting(request, name):
-    context = {
-        'name': name,
-    }
-    return render(request, 'articles/greeting.html', context)
+def update(request, pk):
+    article = Article.objects.get(pk=pk)
+    article.title = request.POST.get('title')
+    article.content = request.POST.get('content')
+    article.save()
+    return redirect('articles:detail', article.pk)

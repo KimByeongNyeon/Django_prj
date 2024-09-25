@@ -1,8 +1,6 @@
-import random
-import re
 from django.shortcuts import render, redirect
+from .forms import ArticleForm
 from .models import Article
-# Create your views here.
 
 
 def index(request):
@@ -22,16 +20,26 @@ def detail(request, pk):
 
 
 def new(request):
-    return render(request, 'articles/new.html')
+    form = ArticleForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'articles/new.html', context)
 
 
 def create(request):
-    title = request.POST.get('title')
-    content = request.POST.get('content')
+    if request.method == 'POST':
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            article = form.save()
+            return redirect('articles:detail', article.pk)
+    else:
+        form = ArticleForm()
 
-    article = Article(title=title, content=content)
-    article.save()
-    return redirect('articles:detail', article.pk)
+    context = {
+        'form': form,
+    }
+    return render(request, 'articles/new.html', context)
 
 
 def delete(request, pk):
@@ -42,7 +50,9 @@ def delete(request, pk):
 
 def edit(request, pk):
     article = Article.objects.get(pk=pk)
+    form = ArticleForm(instance=article)
     context = {
+        'form': form,
         'article': article
     }
     return render(request, 'articles/edit.html', context)
@@ -50,7 +60,16 @@ def edit(request, pk):
 
 def update(request, pk):
     article = Article.objects.get(pk=pk)
-    article.title = request.POST.get('title')
-    article.content = request.POST.get('content')
-    article.save()
-    return redirect('articles:detail', article.pk)
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, instance=article)
+        if form.is_valid():
+            form.save()
+            return redirect('articles:detail', article.pk)
+    else:
+        form = ArticleForm(instance=article)
+
+    context = {
+        'form': form,
+        'article': article
+    }
+    return render(request, 'articles/edit.html', context)

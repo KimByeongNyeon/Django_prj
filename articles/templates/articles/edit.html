@@ -1,16 +1,16 @@
 {% extends "base.html" %} {% block content %}
 <h1>EDIT</h1>
-<form action="{% url "articles:update" article.pk%}" method="POST">
-  {% csrf_token %}
-  <div>
-    <label for="title">Title</label>
-    <input type="text" name="title" id="title" value="{{article.title}}" />
+<form action="{% url 'articles:create' %}" method="POST">
+  {% csrf_token %} {% for field in form %}
+  <div class="form-group">
+    {{ field.label_tag }} {{ field }} {% if field.errors %}
+    <div class="text-danger">{{ field.errors }}</div>
+    {% endif %}
   </div>
-  <div>
-    <label for="content">Content:</label>
-    <textarea name="content" id="content"></textarea>
-  </div>
-  <input type="submit" value="변경" />
+  {% endfor %}
+  <button type="submit" class="btn btn-primary">제출</button>
 </form>
 <hr />
+<a href="{% url 'articles:index' %}" class="btn btn-secondary">목록으로 돌아가기</a>
+</div>
 {% endblock content %}

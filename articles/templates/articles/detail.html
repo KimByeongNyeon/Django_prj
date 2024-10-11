@@ -18,14 +18,16 @@
 <h1>DETAIL</h1>
 <h2>{{article.pk}} 번째 글</h2>
 <hr>
+<p>작성자 : {{article.user}}</p>
 <p>글 제목 : {{article.title}}</p>
 <p>내용</p>
 <p>{{article.content}}</p>
 <p>작성일 : {{article.created_at}}</p>
 <p>수정일 : {{article.updated_at}}</p>
 <hr>
+{% if request.user == user %}
 <div class="form_container">
-<form action="{% url "articles:edit" article.pk %}" method="POST" class="frm">
+<form action="{% url "articles:update" article.pk %}" method="POST" class="frm">
     {% csrf_token %}
     <input type="submit" value="EDIT" class="btn btn-primary">
 </form>
@@ -34,6 +36,33 @@
     <input type="submit" class="btn btn-warning ms-1" value="DELETE">
 </form>
 </div>
+{% endif %}
+<hr />
+<form action="{% url "articles:comments_create" article.pk %}" method="post">
+    {% csrf_token %}
+    {{comments_form}}
+    <input type="submit" value="제출" class="btn btn-success">
+</form>
+{{comments|length}} 개의 댓글
+{% if comments %}
+    <ul>
+        {% for comment in comments  %}
+            <li>
+                {% if request.user == comment.user %}
+                {{comment.user}}(나) - {{comment.content}}
+                <form action="{% url "articles:comments_delete" article.pk comment.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="DELETE" class="btn btn-danger">
+                </form>
+                {% else %}
+                {{comment.user}} - {{comment.content}}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+<p>댓글이 없음</p>
+{% endif %}
 <hr>
 <a href="{% url "articles:index" %}">뒤로가기</a>
 {% endblock content %}

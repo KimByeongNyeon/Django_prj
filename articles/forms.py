@@ -1,5 +1,5 @@
 from django import forms
-from .models import Article
+from .models import Article, Comment
 from .validators import title_validate
 from django.core.exceptions import ValidationError
 
@@ -28,3 +28,8 @@ class ArticleForm(forms.ModelForm):
         title = self.cleaned_data.get('title')
         title_validate(title)
         return title
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('content',)

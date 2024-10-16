@@ -1,15 +1,18 @@
 from django.urls import path
-from . import views
+from .views import (
+    ArticleListView, ArticleDetailView, ArticleCreateView, ArticleUpdateView, 
+    ArticleDeleteView, CommentCreateView, CommentDeleteView, LikeToggleView
+)
 
 app_name = 'articles'
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('<int:pk>/', views.detail, name='detail'),
-    path('create/', views.create, name='create'),
-    path('<int:pk>/delete/', views.delete, name='delete'),
-    path('<int:pk>/update/', views.update, name='update'),
-    path('<int:pk>/comments/', views.comments_create, name='comments_create'),
-    path('<int:article_pk>/comments/<int:comment_pk>/delete/', views.comments_delete, name='comments_delete'),
-    path('<int:article_pk>/likes/', views.likes, name='likes'),
+    path('', ArticleListView.as_view(), name='index'),
+    path('<int:pk>/', ArticleDetailView.as_view(), name='detail'),
+    path('new/', ArticleCreateView.as_view(), name='create'),
+    path('<int:pk>/edit/', ArticleUpdateView.as_view(), name='update'),
+    path('<int:pk>/delete/', ArticleDeleteView.as_view(), name='delete'),
+    path('<int:pk>/comments/', CommentCreateView.as_view(), name='comments_create'),
+    path('<int:article_pk>/comments/<int:comment_pk>/delete/', CommentDeleteView.as_view(), name='comments_delete'),
+    path('<int:article_pk>/like/', LikeToggleView.as_view(), name='likes'),
 ]
